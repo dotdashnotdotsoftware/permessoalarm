@@ -156,8 +156,9 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                         onClick = {
                             if (viewModel.permessoItems.isNotEmpty()) {
                                 val firstItem = viewModel.permessoItems.first()
+                                val lang = viewModel.getLangParam()
                                 viewModel.checkStatus(firstItem.requestId) { result ->
-                                    showNotification(context, firstItem.requestId, result)
+                                    showNotification(context, firstItem.requestId, result, lang)
                                 }
                             } else {
                                 Toast.makeText(context, "Add at least one item for the button to work", Toast.LENGTH_SHORT).show()
@@ -192,11 +193,12 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
     }
 }
 
-private fun showNotification(context: Context, requestId: String, resultText: String) {
+private fun showNotification(context: Context, requestId: String, resultText: String, lang: String) {
     val intent = Intent(context, ResultActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         putExtra("request_id", requestId)
         putExtra("result_text", resultText)
+        putExtra("lang", lang)
     }
     val pendingIntent: PendingIntent = PendingIntent.getActivity(
         context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT

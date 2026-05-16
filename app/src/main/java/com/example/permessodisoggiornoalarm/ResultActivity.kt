@@ -1,14 +1,19 @@
 package com.example.permessodisoggiornoalarm
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -22,6 +27,7 @@ class ResultActivity : ComponentActivity() {
         
         val requestId = intent.getStringExtra("request_id") ?: "Unknown"
         val resultText = intent.getStringExtra("result_text") ?: "No data"
+        val lang = intent.getStringExtra("lang") ?: "italian"
         
         setContent {
             PermessoDiSoggiornoAlarmTheme {
@@ -29,6 +35,7 @@ class ResultActivity : ComponentActivity() {
                     ResultScreen(
                         requestId = requestId,
                         resultText = resultText,
+                        lang = lang,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -38,7 +45,9 @@ class ResultActivity : ComponentActivity() {
 }
 
 @Composable
-fun ResultScreen(requestId: String, resultText: String, modifier: Modifier = Modifier) {
+fun ResultScreen(requestId: String, resultText: String, lang: String, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -46,12 +55,27 @@ fun ResultScreen(requestId: String, resultText: String, modifier: Modifier = Mod
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(
-            text = "Request ID: $requestId",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Request ID: $requestId",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(onClick = {
+                val url = "https://questure.poliziadistato.it/stranieri/?mime=1&lang=$lang&pratica=$requestId"
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(browserIntent)
+            }) {
+                Icon(imageVector = Icons.Default.Public, contentDescription = "Open in Browser")
+            }
+        }
         
         Card(
             modifier = Modifier.fillMaxWidth(),

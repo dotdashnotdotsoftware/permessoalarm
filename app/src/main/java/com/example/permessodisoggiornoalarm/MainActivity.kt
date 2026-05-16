@@ -71,6 +71,11 @@ class MainActivity : ComponentActivity() {
 fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
     val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
+    val randomTime = remember {
+        val hours = (0..23).random()
+        val minutes = (0..59).random()
+        "$hours:${minutes.toString().padStart(2, '0')}"
+    }
     
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -145,13 +150,22 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
         },
         bottomBar = {
             Surface(tonalElevation = 3.dp) {
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
                         .navigationBarsPadding(),
-                    contentAlignment = Alignment.Center
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Button(
+                        onClick = {
+                            Toast.makeText(context, randomTime, Toast.LENGTH_SHORT).show()
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(randomTime)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = {
                             if (viewModel.permessoItems.isNotEmpty()) {

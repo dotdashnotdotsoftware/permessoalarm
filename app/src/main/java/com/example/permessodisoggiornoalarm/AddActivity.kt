@@ -23,10 +23,10 @@ class AddActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AddScreen(
                         modifier = Modifier.padding(innerPadding),
-                        onContinue = { name, todo ->
+                        onContinue = { name, requestId ->
                             val resultIntent = Intent().apply {
                                 putExtra("name", name)
-                                putExtra("todo_item", todo)
+                                putExtra("request_id", requestId)
                             }
                             setResult(Activity.RESULT_OK, resultIntent)
                             finish()
@@ -41,7 +41,7 @@ class AddActivity : ComponentActivity() {
 @Composable
 fun AddScreen(modifier: Modifier = Modifier, onContinue: (String, String) -> Unit) {
     var name by remember { mutableStateOf("") }
-    var todo by remember { mutableStateOf("") }
+    var requestId by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -63,20 +63,20 @@ fun AddScreen(modifier: Modifier = Modifier, onContinue: (String, String) -> Uni
         )
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
-            value = todo,
+            value = requestId,
             onValueChange = {
                 if (it.length <= 20 && !it.contains("\n")) {
-                    todo = it
+                    requestId = it
                 }
             },
-            label = { Text("TODO item (max 20 chars)") },
+            label = { Text("Request ID (max 20 chars)") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { if (name.isNotBlank() && todo.isNotBlank()) onContinue(name, todo) },
-            enabled = name.isNotBlank() && todo.isNotBlank()
+            onClick = { if (name.isNotBlank() && requestId.isNotBlank()) onContinue(name, requestId) },
+            enabled = name.isNotBlank() && requestId.isNotBlank()
         ) {
             Text("Continue")
         }

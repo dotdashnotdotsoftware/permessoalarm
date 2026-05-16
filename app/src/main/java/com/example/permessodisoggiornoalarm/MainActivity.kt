@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PermessoDiSoggiornoAlarmTheme {
-                TodoApp()
+                PermessoApp()
             }
         }
     }
@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoApp(viewModel: TodoViewModel = viewModel()) {
+fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
     val context = LocalContext.current
     
     val launcher = rememberLauncherForActivityResult(
@@ -44,9 +44,9 @@ fun TodoApp(viewModel: TodoViewModel = viewModel()) {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val name = result.data?.getStringExtra("name")
-            val todo = result.data?.getStringExtra("todo_item")
-            if (name != null && todo != null) {
-                viewModel.addItem(name, todo)
+            val requestId = result.data?.getStringExtra("request_id")
+            if (name != null && requestId != null) {
+                viewModel.addItem(name, requestId)
             }
         }
     }
@@ -55,14 +55,14 @@ fun TodoApp(viewModel: TodoViewModel = viewModel()) {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("TODO List") },
+                title = { Text("Permesso List") },
                 actions = {
                     Button(
                         onClick = {
                             val intent = Intent(context, AddActivity::class.java)
                             launcher.launch(intent)
                         },
-                        enabled = viewModel.todoItems.size < 5
+                        enabled = viewModel.permessoItems.size < 5
                     ) {
                         Text("Add")
                     }
@@ -75,8 +75,8 @@ fun TodoApp(viewModel: TodoViewModel = viewModel()) {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            items(viewModel.todoItems) { item ->
-                TodoItemRow(
+            items(viewModel.permessoItems) { item ->
+                PermessoItemRow(
                     item = item,
                     onDelete = { viewModel.removeItem(item) }
                 )
@@ -86,7 +86,7 @@ fun TodoApp(viewModel: TodoViewModel = viewModel()) {
 }
 
 @Composable
-fun TodoItemRow(item: TodoItem, onDelete: () -> Unit) {
+fun PermessoItemRow(item: PermessoItem, onDelete: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,7 +96,7 @@ fun TodoItemRow(item: TodoItem, onDelete: () -> Unit) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-            Text(text = item.value, style = MaterialTheme.typography.bodyMedium)
+            Text(text = item.requestId, style = MaterialTheme.typography.bodyMedium)
         }
         IconButton(onClick = onDelete) {
             Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")

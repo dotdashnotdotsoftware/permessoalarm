@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -138,7 +139,7 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Permesso List",
+                    text = "Permesso di Soggiorno",
                     style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Center
                 )
@@ -189,7 +190,7 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Check Now")
+                        Icon(imageVector = Icons.Default.Sync, contentDescription = "Check Now")
                     }
                 }
             }

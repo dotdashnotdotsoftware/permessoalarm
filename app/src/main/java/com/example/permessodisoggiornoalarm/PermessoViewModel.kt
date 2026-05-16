@@ -75,9 +75,19 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
 
     fun checkStatus(requestId: String, onResult: (String) -> Unit) {
         viewModelScope.launch {
+            val langParam = when (selectedLanguage) {
+                "Italiano" -> "italian"
+                "English" -> "english"
+                "Español" -> "espanol"
+                "Français" -> "french"
+                "Русский" -> "russion"
+                "український" -> "ukrainian"
+                "الْعَرَبيّة" -> "arabic"
+                else -> "italian"
+            }
             val result = withContext(Dispatchers.IO) {
                 try {
-                    val url = URL("https://questure.poliziadistato.it/servizio/stranieri?lang=italian&pratica=$requestId&invia=Invia&mime=4")
+                    val url = URL("https://questure.poliziadistato.it/servizio/stranieri?lang=$langParam&pratica=$requestId&invia=Invia&mime=4")
                     val connection = url.openConnection() as HttpURLConnection
                     connection.requestMethod = "GET"
                     connection.connectTimeout = 10000

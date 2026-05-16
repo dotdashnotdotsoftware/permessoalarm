@@ -73,18 +73,22 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
         prefs.edit().putString("language", language).apply()
     }
 
+    fun getLangParam(): String {
+        return when (selectedLanguage) {
+            "Italiano" -> "italian"
+            "English" -> "english"
+            "Español" -> "espanol"
+            "Français" -> "french"
+            "Русский" -> "russion"
+            "український" -> "ukrainian"
+            "الْعَرَبيّة" -> "arabic"
+            else -> "italian"
+        }
+    }
+
     fun checkStatus(requestId: String, onResult: (String) -> Unit) {
         viewModelScope.launch {
-            val langParam = when (selectedLanguage) {
-                "Italiano" -> "italian"
-                "English" -> "english"
-                "Español" -> "espanol"
-                "Français" -> "french"
-                "Русский" -> "russion"
-                "український" -> "ukrainian"
-                "الْعَرَبيّة" -> "arabic"
-                else -> "italian"
-            }
+            val langParam = getLangParam()
             val result = withContext(Dispatchers.IO) {
                 try {
                     val url = URL("https://questure.poliziadistato.it/servizio/stranieri?lang=$langParam&pratica=$requestId&invia=Invia&mime=4")

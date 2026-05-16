@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -177,7 +179,13 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
             items(viewModel.permessoItems) { item ->
                 PermessoItemRow(
                     item = item,
-                    onDelete = { viewModel.removeItem(item) }
+                    onDelete = { viewModel.removeItem(item) },
+                    onOpenBrowser = {
+                        val lang = viewModel.getLangParam()
+                        val url = "https://questure.poliziadistato.it/stranieri/?mime=1&lang=$lang&pratica=${item.requestId}"
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        context.startActivity(browserIntent)
+                    }
                 )
             }
         }
@@ -254,7 +262,7 @@ fun LanguageSelectionDialog(
 }
 
 @Composable
-fun PermessoItemRow(item: PermessoItem, onDelete: () -> Unit) {
+fun PermessoItemRow(item: PermessoItem, onDelete: () -> Unit, onOpenBrowser: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -266,8 +274,13 @@ fun PermessoItemRow(item: PermessoItem, onDelete: () -> Unit) {
             Text(text = item.name, style = MaterialTheme.typography.titleMedium)
             Text(text = item.requestId, style = MaterialTheme.typography.bodyMedium)
         }
-        IconButton(onClick = onDelete) {
-            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+        Row {
+            IconButton(onClick = onOpenBrowser) {
+                Icon(imageVector = Icons.Default.Public, contentDescription = "Open in Browser")
+            }
+            IconButton(onClick = onDelete) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+            }
         }
     }
 }

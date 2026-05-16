@@ -9,6 +9,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -42,6 +43,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
     val context = LocalContext.current
+    var showLanguageDialog by remember { mutableStateOf(false) }
     
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -53,6 +55,17 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                 viewModel.addItem(name, requestId)
             }
         }
+    }
+
+    if (showLanguageDialog) {
+        LanguageSelectionDialog(
+            currentLanguage = viewModel.selectedLanguage,
+            onLanguageSelected = {
+                viewModel.setLanguage(it)
+                showLanguageDialog = false
+            },
+            onDismiss = { showLanguageDialog = false }
+        )
     }
 
     Scaffold(
@@ -70,7 +83,7 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { Toast.makeText(context, "TODO", Toast.LENGTH_SHORT).show() }) {
+                    IconButton(onClick = { showLanguageDialog = true }) {
                         Icon(imageVector = Icons.Default.Language, contentDescription = "Language")
                     }
                     IconButton(
@@ -132,6 +145,47 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
             }
         }
     }
+}
+
+@Composable
+fun LanguageSelectionDialog(
+    currentLanguage: String,
+    onLanguageSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val languages = listOf(
+        "Italiano", "English", "Español", "Français", "Русский", "український", "الْعَرَبيّة"
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Select Language") },
+        text = {
+            Column {
+                languages.forEach { language ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onLanguageSelected(language) }
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = (language == currentLanguage),
+                            onClick = { onLanguageSelected(language) }
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = language)
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }
 
 @Composable

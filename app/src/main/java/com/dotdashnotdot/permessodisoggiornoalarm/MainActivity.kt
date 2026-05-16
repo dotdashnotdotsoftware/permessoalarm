@@ -252,22 +252,39 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
             }
         }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            items(viewModel.permessoItems) { item ->
-                PermessoItemRow(
-                    item = item,
-                    onDelete = { viewModel.removeItem(item) },
-                    onOpenBrowser = {
-                        val lang = viewModel.getLangParam()
-                        val url = "https://questure.poliziadistato.it/stranieri/?mime=1&lang=$lang&pratica=${item.requestId}"
-                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                        context.startActivity(browserIntent)
-                    }
+        if (viewModel.permessoItems.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(32.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.msg_get_started),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            ) {
+                items(viewModel.permessoItems) { item ->
+                    PermessoItemRow(
+                        item = item,
+                        onDelete = { viewModel.removeItem(item) },
+                        onOpenBrowser = {
+                            val lang = viewModel.getLangParam()
+                            val url = "https://questure.poliziadistato.it/stranieri/?mime=1&lang=$lang&pratica=${item.requestId}"
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            context.startActivity(browserIntent)
+                        }
+                    )
+                }
             }
         }
     }

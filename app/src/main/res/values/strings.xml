@@ -42,4 +42,5 @@
 
     <!-- ViewModel/Errors -->
     <string name="msg_something_went_wrong">Something went wrong</string>
+    <string name="msg_get_started">No items added yet. Touch the + button to begin!</string>
 </resources>

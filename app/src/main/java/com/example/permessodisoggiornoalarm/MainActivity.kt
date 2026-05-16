@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -154,7 +155,20 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                 ) {
                     Button(
                         onClick = {
-                            Toast.makeText(context, viewModel.randomTime, Toast.LENGTH_SHORT).show()
+                            val timeParts = viewModel.randomTime.split(":")
+                            val initialHour = timeParts.getOrNull(0)?.toIntOrNull() ?: 12
+                            val initialMinute = timeParts.getOrNull(1)?.toIntOrNull() ?: 0
+                            
+                            TimePickerDialog(
+                                context,
+                                { _, hour, minute ->
+                                    val formattedTime = "$hour:${minute.toString().padStart(2, '0')}"
+                                    viewModel.updateRandomTime(formattedTime)
+                                },
+                                initialHour,
+                                initialMinute,
+                                true // 24 hour format
+                            ).show()
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {

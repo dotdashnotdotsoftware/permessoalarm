@@ -89,6 +89,11 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
         prefs.edit().putString("language", language).apply()
     }
 
+    fun updateRandomTime(time: String) {
+        randomTime = time
+        prefs.edit().putString("random_time", time).apply()
+    }
+
     fun getLangParam(): String {
         return when (selectedLanguage) {
             "Italiano" -> "italian"

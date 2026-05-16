@@ -3,7 +3,6 @@ package com.dotdashnotdot.permessodisoggiornoalarm
 import android.Manifest
 import android.app.Activity
 import android.app.AlarmManager
-import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
@@ -150,7 +149,7 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                     ) {
                         IconButton(onClick = { showLanguageDialog = true }) {
                             Icon(
-                                imageVector = Icons.Default.Language,
+                                imageVector = Icons.Default.Public,
                                 contentDescription = stringResource(R.string.desc_language),
                                 tint = Color(0xFFF4F5F0)
                             )
@@ -330,7 +329,7 @@ fun PermessoItemRow(item: PermessoItem, onDelete: () -> Unit, onOpenBrowser: () 
         }
         Row {
             IconButton(onClick = onOpenBrowser) {
-                Icon(imageVector = Icons.Default.Public, contentDescription = stringResource(R.string.desc_open_browser))
+                Icon(imageVector = Icons.Default.Language, contentDescription = stringResource(R.string.desc_open_browser))
             }
             IconButton(onClick = onDelete) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.desc_delete))

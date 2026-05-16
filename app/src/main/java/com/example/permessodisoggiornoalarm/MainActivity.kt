@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.permessodisoggiornoalarm.ui.theme.PermessoDiSoggiornoAlarmTheme
 
 class MainActivity : ComponentActivity() {
@@ -35,8 +36,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoApp() {
-    val todoItems = remember { mutableStateListOf<String>() }
+fun TodoApp(viewModel: TodoViewModel = viewModel()) {
     val context = LocalContext.current
     
     val launcher = rememberLauncherForActivityResult(
@@ -45,7 +45,7 @@ fun TodoApp() {
         if (result.resultCode == Activity.RESULT_OK) {
             val item = result.data?.getStringExtra("todo_item")
             if (item != null) {
-                todoItems.add(item)
+                viewModel.addItem(item)
             }
         }
     }
@@ -71,10 +71,10 @@ fun TodoApp() {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            items(todoItems) { item ->
+            items(viewModel.todoItems) { item ->
                 TodoItemRow(
                     item = item,
-                    onDelete = { todoItems.remove(item) }
+                    onDelete = { viewModel.removeItem(item) }
                 )
             }
         }

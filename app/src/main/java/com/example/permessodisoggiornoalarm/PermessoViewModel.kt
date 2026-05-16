@@ -24,9 +24,25 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
     
     var selectedLanguage by mutableStateOf(prefs.getString("language", "Italiano") ?: "Italiano")
         private set
+    
+    var randomTime by mutableStateOf("")
+        private set
 
     init {
         loadItems()
+        loadRandomTime()
+    }
+
+    private fun loadRandomTime() {
+        val savedTime = prefs.getString("random_time", "") ?: ""
+        if (savedTime.isNotEmpty()) {
+            randomTime = savedTime
+        } else {
+            val hours = (0..23).random()
+            val minutes = (0..59).random()
+            randomTime = "$hours:${minutes.toString().padStart(2, '0')}"
+            prefs.edit().putString("random_time", randomTime).apply()
+        }
     }
 
     private fun loadItems() {

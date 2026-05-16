@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.permessodisoggiornoalarm.ui.theme.PermessoDiSoggiornoAlarmTheme
@@ -55,20 +58,38 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
-                title = { Text("Permesso List") },
-                actions = {
-                    Button(
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { Toast.makeText(context, "TODO", Toast.LENGTH_SHORT).show() }) {
+                        Icon(imageVector = Icons.Default.Language, contentDescription = "Language")
+                    }
+                    IconButton(
                         onClick = {
                             val intent = Intent(context, AddActivity::class.java)
                             launcher.launch(intent)
                         },
                         enabled = viewModel.permessoItems.size < 5
                     ) {
-                        Text("Add")
+                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
                     }
                 }
-            )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Permesso List",
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center
+                )
+            }
         },
         bottomBar = {
             Surface(tonalElevation = 3.dp) {

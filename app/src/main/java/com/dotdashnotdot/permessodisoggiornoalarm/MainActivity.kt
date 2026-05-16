@@ -221,13 +221,12 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = {
-                            val url = "https://paypal.me/dotnotdotsoftware"
-                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            context.startActivity(browserIntent)
+                            val intent = Intent(context, InfoActivity::class.java)
+                            context.startActivity(intent)
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(stringResource(R.string.btn_donate))
+                        Text(stringResource(R.string.btn_info))
                     }
                 }
             }

@@ -19,6 +19,9 @@
     <string name="label_request_id">Request ID (max 20 chars)</string>
     <string name="btn_continue">Continue</string>
     <string name="btn_donate">Donate</string>
+    <string name="btn_info">Info</string>
+    <string name="title_info">Information &amp; Disclaimer</string>
+    <string name="disclaimer_text">This is not an official application of, affiliated with, or endorsed by, the Polizia di Stato. It is an independent project for automatically checking the status of requests using data that is available to the public. This app uses systems that might change and break how this software works at any moment.\n\nAll code is available to the public without restrictions.\n\nThere is no obligation to do so, but if you find the app helpful and wish to show appreciation, you can make a voluntary donation below.</string>
 
     <!-- ResultActivity -->
     <string name="title_status_result">Status Result</string>

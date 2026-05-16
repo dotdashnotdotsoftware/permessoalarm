@@ -13,6 +13,7 @@ import java.net.URL
 class PermessoWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        Log.d("PermessoWorker", "Background work started")
         val prefs = applicationContext.getSharedPreferences("permesso_prefs", Context.MODE_PRIVATE)
         val savedString = prefs.getString("items", "") ?: ""
         

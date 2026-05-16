@@ -1,7 +1,11 @@
 package com.example.permessodisoggiornoalarm
 
+import android.app.AlarmManager
 import android.app.Application
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -9,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,7 +22,6 @@ import org.xmlpull.v1.XmlPullParserFactory
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class PermessoViewModel(application: Application) : AndroidViewModel(application) {
     private val prefs = application.getSharedPreferences("permesso_prefs", Context.MODE_PRIVATE)
@@ -34,7 +36,7 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
     init {
         loadItems()
         loadRandomTime()
-        scheduleDailyWork()
+        scheduleDailyWork(application)
     }
 
     private fun loadItems() {
@@ -94,9 +96,10 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun updateRandomTime(time: String) {
+        Log.d("PermessoViewModel", "Updating time to $time")
         randomTime = time
         prefs.edit().putString("random_time", time).apply()
-        scheduleDailyWork()
+        scheduleDailyWork(getApplication())
     }
 
     fun getLangParam(): String {
@@ -174,32 +177,49 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
         return null
     }
 
-    private fun scheduleDailyWork() {
-        val timeParts = randomTime.split(":")
-        val targetHour = timeParts.getOrNull(0)?.toIntOrNull() ?: 0
-        val targetMinute = timeParts.getOrNull(1)?.toIntOrNull() ?: 0
+    companion object {
+        fun scheduleDailyWork(context: Context) {
+            val prefs = context.getSharedPreferences("permesso_prefs", Context.MODE_PRIVATE)
+            val time = prefs.getString("random_time", "12:00") ?: "12:00"
+            val timeParts = time.split(":")
+            val targetHour = timeParts.getOrNull(0)?.toIntOrNull() ?: 0
+            val targetMinute = timeParts.getOrNull(1)?.toIntOrNull() ?: 0
 
-        val currentDate = Calendar.getInstance()
-        val dueDate = Calendar.getInstance()
-        dueDate.set(Calendar.HOUR_OF_DAY, targetHour)
-        dueDate.set(Calendar.MINUTE, targetMinute)
-        dueDate.set(Calendar.SECOND, 0)
-        
-        if (dueDate.before(currentDate)) {
-            dueDate.add(Calendar.HOUR_OF_DAY, 24)
+            val currentDate = Calendar.getInstance()
+            val dueDate = Calendar.getInstance()
+            dueDate.set(Calendar.HOUR_OF_DAY, targetHour)
+            dueDate.set(Calendar.MINUTE, targetMinute)
+            dueDate.set(Calendar.SECOND, 0)
+            dueDate.set(Calendar.MILLISECOND, 0)
+            
+            if (dueDate.before(currentDate)) {
+                dueDate.add(Calendar.HOUR_OF_DAY, 24)
+            }
+
+            Log.d("PermessoViewModel", "Scheduling EXACT alarm at $time (in ${(dueDate.timeInMillis - currentDate.timeInMillis) / 1000} seconds)")
+
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(context, PermessoReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    dueDate.timeInMillis,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    dueDate.timeInMillis,
+                    pendingIntent
+                )
+            }
         }
-
-        val timeDiff = dueDate.timeInMillis - currentDate.timeInMillis
-        
-        val dailyWorkRequest = PeriodicWorkRequestBuilder<PermessoWorker>(24, TimeUnit.HOURS)
-            .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
-            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
-            .build()
-
-        WorkManager.getInstance(getApplication()).enqueueUniquePeriodicWork(
-            "PermessoDailyCheck",
-            ExistingPeriodicWorkPolicy.UPDATE,
-            dailyWorkRequest
-        )
     }
 }

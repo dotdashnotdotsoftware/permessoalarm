@@ -18,6 +18,7 @@
     <string name="label_name">Name (max 20 chars)</string>
     <string name="label_request_id">Request ID (max 20 chars)</string>
     <string name="btn_continue">Continue</string>
+    <string name="btn_donate">Donate</string>
 
     <!-- ResultActivity -->
     <string name="title_status_result">Status Result</string>

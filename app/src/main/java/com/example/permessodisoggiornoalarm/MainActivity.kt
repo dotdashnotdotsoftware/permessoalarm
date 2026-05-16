@@ -218,6 +218,17 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                     ) {
                         Icon(imageVector = Icons.Default.Sync, contentDescription = stringResource(R.string.desc_check_now))
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = {
+                            val url = "https://paypal.me/dotnotdotsoftware"
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            context.startActivity(browserIntent)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.btn_donate))
+                    }
                 }
             }
         }

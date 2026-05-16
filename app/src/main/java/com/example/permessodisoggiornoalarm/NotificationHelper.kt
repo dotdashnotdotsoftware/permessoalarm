@@ -51,7 +51,7 @@ object NotificationHelper {
 
         with(NotificationManagerCompat.from(context)) {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                notify(1, builder.build())
+                notify(requestId.hashCode(), builder.build())
             }
         }
     }

@@ -21,34 +21,35 @@ class PermessoWorker(context: Context, params: WorkerParameters) : CoroutineWork
         val lines = savedString.split("\n")
         if (lines.isEmpty()) return Result.success()
 
-        val firstLine = lines[0]
-        return try {
-            val json = JSONObject(firstLine)
-            val name = json.getString("name")
-            val requestId = json.getString("requestId")
-            val selectedLanguage = prefs.getString("language", "Italiano") ?: "Italiano"
-            
-            val langParam = when (selectedLanguage) {
-                "Italiano" -> "italian"
-                "English" -> "english"
-                "Español" -> "espanol"
-                "Français" -> "french"
-                "Русский" -> "russion"
-                "український" -> "ukrainian"
-                "الْعَرَبيّة" -> "arabic"
-                else -> "italian"
-            }
-
-            val resultText = fetchStatus(requestId, langParam)
-            Log.d("PermessoWorker", "Background check result for $requestId: $resultText")
-            
-            NotificationHelper.showNotification(applicationContext, requestId, resultText, langParam)
-            
-            Result.success()
-        } catch (e: Exception) {
-            Log.e("PermessoWorker", "Error in background check", e)
-            Result.retry()
+        val selectedLanguage = prefs.getString("language", "Italiano") ?: "Italiano"
+        val langParam = when (selectedLanguage) {
+            "Italiano" -> "italian"
+            "English" -> "english"
+            "Español" -> "espanol"
+            "Français" -> "french"
+            "Русский" -> "russion"
+            "український" -> "ukrainian"
+            "الْعَرَبيّة" -> "arabic"
+            else -> "italian"
         }
+
+        var hasError = false
+        lines.forEach { line ->
+            if (line.isNotBlank()) {
+                try {
+                    val json = JSONObject(line)
+                    val requestId = json.getString("requestId")
+                    val resultText = fetchStatus(requestId, langParam)
+                    Log.d("PermessoWorker", "Background check result for $requestId: $resultText")
+                    NotificationHelper.showNotification(applicationContext, requestId, resultText, langParam)
+                } catch (e: Exception) {
+                    Log.e("PermessoWorker", "Error in background check for line: $line", e)
+                    hasError = true
+                }
+            }
+        }
+        
+        return if (hasError) Result.retry() else Result.success()
     }
 
     private fun fetchStatus(requestId: String, lang: String): String {

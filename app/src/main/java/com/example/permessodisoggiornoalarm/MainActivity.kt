@@ -165,10 +165,11 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                     Button(
                         onClick = {
                             if (viewModel.permessoItems.isNotEmpty()) {
-                                val firstItem = viewModel.permessoItems.first()
                                 val lang = viewModel.getLangParam()
-                                viewModel.checkStatus(firstItem.requestId) { result ->
-                                    NotificationHelper.showNotification(context, firstItem.requestId, result, lang)
+                                viewModel.permessoItems.forEach { item ->
+                                    viewModel.checkStatus(item.requestId) { result ->
+                                        NotificationHelper.showNotification(context, item.requestId, result, lang)
+                                    }
                                 }
                             } else {
                                 Toast.makeText(context, "Add at least one item for the button to work", Toast.LENGTH_SHORT).show()

@@ -32,8 +32,10 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun addItem(name: String, value: String) {
-        todoItems.add(TodoItem(name, value))
-        saveItems()
+        if (todoItems.size < 5) {
+            todoItems.add(TodoItem(name, value))
+            saveItems()
+        }
     }
 
     fun removeItem(item: TodoItem) {

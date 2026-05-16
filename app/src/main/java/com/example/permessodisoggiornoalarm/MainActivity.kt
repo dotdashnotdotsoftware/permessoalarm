@@ -57,10 +57,13 @@ fun TodoApp(viewModel: TodoViewModel = viewModel()) {
             TopAppBar(
                 title = { Text("TODO List") },
                 actions = {
-                    Button(onClick = {
-                        val intent = Intent(context, AddActivity::class.java)
-                        launcher.launch(intent)
-                    }) {
+                    Button(
+                        onClick = {
+                            val intent = Intent(context, AddActivity::class.java)
+                            launcher.launch(intent)
+                        },
+                        enabled = viewModel.todoItems.size < 5
+                    ) {
                         Text("Add")
                     }
                 }

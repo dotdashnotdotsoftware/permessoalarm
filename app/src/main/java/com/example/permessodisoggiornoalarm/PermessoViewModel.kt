@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -72,12 +71,14 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
         if (permessoItems.size < 5) {
             permessoItems.add(PermessoItem(name, requestId))
             saveItems()
+            scheduleDailyWork(getApplication())
         }
     }
 
     fun removeItem(item: PermessoItem) {
         permessoItems.remove(item)
         saveItems()
+        scheduleDailyWork(getApplication())
     }
 
     private fun saveItems() {
@@ -182,6 +183,25 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
     companion object {
         fun scheduleDailyWork(context: Context) {
             val prefs = context.getSharedPreferences("permesso_prefs", Context.MODE_PRIVATE)
+            
+            val savedItemsString = prefs.getString("items", "") ?: ""
+            val itemsCount = if (savedItemsString.isBlank()) 0 else savedItemsString.split("\n").filter { it.isNotBlank() }.size
+            
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(context, PermessoReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            if (itemsCount < 1) {
+                LogHelper.log(context, "No items found, cancelling any existing alarm.")
+                alarmManager.cancel(pendingIntent)
+                return
+            }
+
             val time = prefs.getString("random_time", "12:00") ?: "12:00"
             val timeParts = time.split(":")
             val targetHour = timeParts.getOrNull(0)?.toIntOrNull() ?: 0
@@ -197,15 +217,6 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
             if (dueDate.before(currentDate)) {
                 dueDate.add(Calendar.HOUR_OF_DAY, 24)
             }
-
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val intent = Intent(context, PermessoReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
 
             val canScheduleExact = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 alarmManager.canScheduleExactAlarms()

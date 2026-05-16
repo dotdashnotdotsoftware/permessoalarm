@@ -1,4 +1,4 @@
-package com.example.permessodisoggiornoalarm.ui.theme
+package com.dotdashnotdot.permessodisoggiornoalarm.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,3 +1,3 @@
-package com.example.permessodisoggiornoalarm
+package com.dotdashnotdot.permessodisoggiornoalarm
 
 data class PermessoItem(val name: String, val requestId: String)

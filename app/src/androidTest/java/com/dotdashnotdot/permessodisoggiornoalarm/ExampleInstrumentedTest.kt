@@ -1,4 +1,4 @@
-package com.example.permessodisoggiornoalarm
+package com.dotdashnotdot.permessodisoggiornoalarm
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.example.permessodisoggiornoalarm", appContext.packageName)
+        assertEquals("com.dotdashnotdot.permessodisoggiornoalarm", appContext.packageName)
     }
 }

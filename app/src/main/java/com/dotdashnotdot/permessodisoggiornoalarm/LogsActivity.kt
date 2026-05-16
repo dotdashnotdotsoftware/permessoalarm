@@ -1,4 +1,4 @@
-package com.example.permessodisoggiornoalarm
+package com.dotdashnotdot.permessodisoggiornoalarm
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.permessodisoggiornoalarm.ui.theme.PermessoDiSoggiornoAlarmTheme
+import com.dotdashnotdot.permessodisoggiornoalarm.ui.theme.PermessoDiSoggiornoAlarmTheme
 
 class LogsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

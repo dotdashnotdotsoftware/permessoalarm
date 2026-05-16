@@ -1,4 +1,4 @@
-package com.example.permessodisoggiornoalarm
+package com.dotdashnotdot.permessodisoggiornoalarm
 
 import org.junit.Test
 

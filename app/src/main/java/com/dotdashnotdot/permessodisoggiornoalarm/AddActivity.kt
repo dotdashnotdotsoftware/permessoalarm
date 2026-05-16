@@ -1,4 +1,4 @@
-package com.example.permessodisoggiornoalarm
+package com.dotdashnotdot.permessodisoggiornoalarm
 
 import android.app.Activity
 import android.content.Intent
@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.permessodisoggiornoalarm.ui.theme.PermessoDiSoggiornoAlarmTheme
+import com.dotdashnotdot.permessodisoggiornoalarm.ui.theme.PermessoDiSoggiornoAlarmTheme
 
 class AddActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

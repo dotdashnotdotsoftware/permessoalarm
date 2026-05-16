@@ -41,7 +41,7 @@ object NotificationHelper {
         )
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setContentTitle("Permesso Status: $requestId")
             .setContentText(resultText)
             .setStyle(NotificationCompat.BigTextStyle().bigText(resultText))

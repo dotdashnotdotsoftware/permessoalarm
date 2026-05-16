@@ -3,6 +3,7 @@ package com.example.permessodisoggiornoalarm
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -68,6 +69,31 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                     }
                 }
             )
+        },
+        bottomBar = {
+            Surface(tonalElevation = 3.dp) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .navigationBarsPadding(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Button(
+                        onClick = {
+                            if (viewModel.permessoItems.isNotEmpty()) {
+                                val firstItem = viewModel.permessoItems.first()
+                                Toast.makeText(context, "Request ID: ${firstItem.requestId}", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Add at least one item for the button to work", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Check Now")
+                    }
+                }
+            }
         }
     ) { innerPadding ->
         LazyColumn(

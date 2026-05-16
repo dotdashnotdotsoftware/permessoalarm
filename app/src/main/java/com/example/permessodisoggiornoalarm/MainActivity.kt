@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Sync
@@ -147,6 +148,12 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                 ) {
                     IconButton(onClick = { showLanguageDialog = true }) {
                         Icon(imageVector = Icons.Default.Language, contentDescription = "Language")
+                    }
+                    IconButton(onClick = {
+                        val intent = Intent(context, LogsActivity::class.java)
+                        context.startActivity(intent)
+                    }) {
+                        Icon(imageVector = Icons.Default.Description, contentDescription = "Logs")
                     }
                     IconButton(
                         onClick = {

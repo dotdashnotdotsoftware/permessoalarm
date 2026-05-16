@@ -96,7 +96,8 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun updateRandomTime(time: String) {
-        Log.d("PermessoViewModel", "Updating time to $time")
+        val msg = "Updating time to $time"
+        LogHelper.log(getApplication(), msg)
         randomTime = time
         prefs.edit().putString("random_time", time).apply()
         scheduleDailyWork(getApplication())
@@ -135,7 +136,7 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
                     "Something went wrong"
                 }
             }
-            Log.d("PermessoViewModel", "Status check result for $requestId: $result")
+            LogHelper.log(getApplication(), "Check ID $requestId: $result")
             onResult(result)
         }
     }
@@ -212,7 +213,8 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
             }
 
             if (canScheduleExact) {
-                Log.d("PermessoViewModel", "Scheduling EXACT alarm at $time (in ${(dueDate.timeInMillis - currentDate.timeInMillis) / 1000} seconds)")
+                val msg = "Scheduling EXACT alarm at $time (in ${(dueDate.timeInMillis - currentDate.timeInMillis) / 1000} seconds)"
+                LogHelper.log(context, msg)
                 alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     dueDate.timeInMillis,

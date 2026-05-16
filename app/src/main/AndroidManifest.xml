@@ -38,6 +38,11 @@
             android:exported="false"
             android:label="Status Result"
             android:theme="@style/Theme.PermessoDiSoggiornoAlarm" />
+        <activity
+            android:name=".LogsActivity"
+            android:exported="false"
+            android:label="Application Logs"
+            android:theme="@style/Theme.PermessoDiSoggiornoAlarm" />
 
         <receiver android:name=".PermessoReceiver" android:enabled="true" android:exported="false" />
 

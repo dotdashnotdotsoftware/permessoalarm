@@ -8,7 +8,8 @@ import android.util.Log
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            Log.d("BootReceiver", "Boot completed, rescheduling alarm")
+            val msg = "Boot completed, rescheduling alarm"
+            LogHelper.log(context, msg)
             PermessoViewModel.scheduleDailyWork(context)
         }
     }

@@ -9,7 +9,8 @@ import androidx.work.WorkManager
 
 class PermessoReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d("PermessoReceiver", "Alarm received, triggering background check")
+        val msg = "Alarm received, triggering background check"
+        LogHelper.log(context, msg)
         
         val workRequest = OneTimeWorkRequestBuilder<PermessoWorker>().build()
         WorkManager.getInstance(context).enqueue(workRequest)

@@ -13,7 +13,7 @@ import java.net.URL
 class PermessoWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        Log.d("PermessoWorker", "Background work started")
+        LogHelper.log(applicationContext, "Background check started")
         val prefs = applicationContext.getSharedPreferences("permesso_prefs", Context.MODE_PRIVATE)
         val savedString = prefs.getString("items", "") ?: ""
         
@@ -41,10 +41,10 @@ class PermessoWorker(context: Context, params: WorkerParameters) : CoroutineWork
                     val json = JSONObject(line)
                     val requestId = json.getString("requestId")
                     val resultText = fetchStatus(requestId, langParam)
-                    Log.d("PermessoWorker", "Background check result for $requestId: $resultText")
+                    LogHelper.log(applicationContext, "Background check result for $requestId: $resultText")
                     NotificationHelper.showNotification(applicationContext, requestId, resultText, langParam)
                 } catch (e: Exception) {
-                    Log.e("PermessoWorker", "Error in background check for line: $line", e)
+                    LogHelper.log(applicationContext, "Error in background check for line: $line - ${e.message}")
                     hasError = true
                 }
             }

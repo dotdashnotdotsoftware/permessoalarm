@@ -2,6 +2,7 @@ package com.example.permessodisoggiornoalarm
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -59,6 +60,7 @@ class MainActivity : ComponentActivity() {
 fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
     val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
+    var showAlarmPermissionDialog by remember { mutableStateOf(false) }
     
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -68,6 +70,13 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                showAlarmPermissionDialog = true
             }
         }
     }
@@ -92,6 +101,32 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                 showLanguageDialog = false
             },
             onDismiss = { showLanguageDialog = false }
+        )
+    }
+
+    if (showAlarmPermissionDialog) {
+        AlertDialog(
+            onDismissRequest = { showAlarmPermissionDialog = false },
+            title = { Text("Exact Alarm Permission") },
+            text = { Text("This app needs permission to schedule exact alarms for daily status checks. Please enable it in settings for better reliability.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val intent = Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        context.startActivity(intent)
+                    }
+                    showAlarmPermissionDialog = false
+                }) {
+                    Text("Open Settings")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAlarmPermissionDialog = false }) {
+                    Text("Cancel")
+                }
+            }
         )
     }
 

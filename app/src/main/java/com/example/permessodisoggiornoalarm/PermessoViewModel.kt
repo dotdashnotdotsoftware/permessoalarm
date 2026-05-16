@@ -196,8 +196,6 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
                 dueDate.add(Calendar.HOUR_OF_DAY, 24)
             }
 
-            Log.d("PermessoViewModel", "Scheduling EXACT alarm at $time (in ${(dueDate.timeInMillis - currentDate.timeInMillis) / 1000} seconds)")
-
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val intent = Intent(context, PermessoReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(
@@ -207,14 +205,22 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val canScheduleExact = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                alarmManager.canScheduleExactAlarms()
+            } else {
+                true
+            }
+
+            if (canScheduleExact) {
+                Log.d("PermessoViewModel", "Scheduling EXACT alarm at $time (in ${(dueDate.timeInMillis - currentDate.timeInMillis) / 1000} seconds)")
                 alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     dueDate.timeInMillis,
                     pendingIntent
                 )
             } else {
-                alarmManager.setExact(
+                Log.d("PermessoViewModel", "Scheduling inexact alarm at $time (permission not granted)")
+                alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     dueDate.timeInMillis,
                     pendingIntent

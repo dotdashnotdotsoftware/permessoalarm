@@ -83,7 +83,9 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                         onClick = {
                             if (viewModel.permessoItems.isNotEmpty()) {
                                 val firstItem = viewModel.permessoItems.first()
-                                Toast.makeText(context, "Request ID: ${firstItem.requestId}", Toast.LENGTH_SHORT).show()
+                                viewModel.checkStatus(firstItem.requestId) { result ->
+                                    Toast.makeText(context, result, Toast.LENGTH_LONG).show()
+                                }
                             } else {
                                 Toast.makeText(context, "Add at least one item for the button to work", Toast.LENGTH_SHORT).show()
                             }

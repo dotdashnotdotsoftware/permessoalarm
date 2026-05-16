@@ -32,6 +32,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -131,47 +132,69 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Surface(
+                color = Color(0xFFCD212A),
+                contentColor = Color(0xFFF4F5F0)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    IconButton(onClick = { showLanguageDialog = true }) {
-                        Icon(imageVector = Icons.Default.Language, contentDescription = stringResource(R.string.desc_language))
-                    }
-                    IconButton(onClick = {
-                        val intent = Intent(context, InfoActivity::class.java)
-                        context.startActivity(intent)
-                    }) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.Help, contentDescription = stringResource(R.string.btn_info))
-                    }
-                    IconButton(
-                        onClick = {
-                            val intent = Intent(context, AddActivity::class.java)
-                            launcher.launch(intent)
-                        },
-                        enabled = viewModel.permessoItems.size < 5
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.desc_add))
+                        IconButton(onClick = { showLanguageDialog = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Language,
+                                contentDescription = stringResource(R.string.desc_language),
+                                tint = Color(0xFFF4F5F0)
+                            )
+                        }
+                        IconButton(onClick = {
+                            val intent = Intent(context, InfoActivity::class.java)
+                            context.startActivity(intent)
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Help,
+                                contentDescription = stringResource(R.string.btn_info),
+                                tint = Color(0xFFF4F5F0)
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                val intent = Intent(context, AddActivity::class.java)
+                                launcher.launch(intent)
+                            },
+                            enabled = viewModel.permessoItems.size < 5
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = stringResource(R.string.desc_add),
+                                tint = if (viewModel.permessoItems.size < 5) Color(0xFFF4F5F0) else Color(0xFFF4F5F0).copy(alpha = 0.38f)
+                            )
+                        }
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(R.string.title_permesso_list),
+                        style = MaterialTheme.typography.headlineMedium,
+                        textAlign = TextAlign.Center,
+                        color = Color(0xFFF4F5F0)
+                    )
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.title_permesso_list),
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center
-                )
             }
         },
         bottomBar = {
-            Surface(tonalElevation = 3.dp) {
+            Surface(
+                color = Color(0xFF008C45),
+                contentColor = Color(0xFFF4F5F0),
+                tonalElevation = 3.dp
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -196,7 +219,11 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                                 true // 24 hour format
                             ).show()
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFF4F5F0),
+                            contentColor = Color(0xFF1A1A1A)
+                        )
                     ) {
                         Text(viewModel.randomTime)
                     }
@@ -214,7 +241,11 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                                 Toast.makeText(context, context.getString(R.string.error_add_item), Toast.LENGTH_SHORT).show()
                             }
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFF4F5F0),
+                            contentColor = Color(0xFF1A1A1A)
+                        )
                     ) {
                         Icon(imageVector = Icons.Default.Sync, contentDescription = stringResource(R.string.desc_check_now))
                     }

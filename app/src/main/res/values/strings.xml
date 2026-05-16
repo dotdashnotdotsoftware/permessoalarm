@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Permesso Alarm</string>
-    <string name="title_permesso_list">Permesso di Soggiorno</string>
+    <string name="title_permesso_list">Permesso di Soggiorno Alarm</string>
     <string name="error_add_item">Add at least one item for the button to work</string>
     <string name="desc_language">Language</string>
     <string name="desc_logs">Logs</string>

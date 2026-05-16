@@ -1,7 +1,6 @@
 package com.example.permessodisoggiornoalarm
 
 import android.content.Context
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import org.json.JSONObject
@@ -54,6 +53,7 @@ class PermessoWorker(context: Context, params: WorkerParameters) : CoroutineWork
     }
 
     private fun fetchStatus(requestId: String, lang: String): String {
+        val errorMsg = applicationContext.getString(R.string.msg_something_went_wrong)
         return try {
             val url = URL("https://questure.poliziadistato.it/servizio/stranieri?lang=$lang&pratica=$requestId&invia=Invia&mime=4")
             val connection = url.openConnection() as HttpURLConnection
@@ -62,12 +62,12 @@ class PermessoWorker(context: Context, params: WorkerParameters) : CoroutineWork
             connection.readTimeout = 10000
 
             if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-                parseXml(connection.inputStream)?.trim() ?: "Something went wrong"
+                parseXml(connection.inputStream)?.trim() ?: errorMsg
             } else {
-                "Something went wrong"
+                errorMsg
             }
         } catch (e: Exception) {
-            "Something went wrong"
+            errorMsg
         }
     }
 

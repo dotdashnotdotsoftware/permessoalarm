@@ -15,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,9 +39,11 @@ class LogsActivity : ComponentActivity() {
 fun LogsScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     var logs by remember { mutableStateOf("") }
+    val noLogsMsg = stringResource(R.string.msg_no_logs)
 
     LaunchedEffect(Unit) {
         logs = LogHelper.getLogs(context)
+        if (logs.isEmpty()) logs = noLogsMsg
     }
 
     Column(
@@ -53,16 +56,16 @@ fun LogsScreen(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Application Logs",
+                text = stringResource(R.string.title_app_logs),
                 style = MaterialTheme.typography.headlineSmall
             )
             Button(onClick = {
                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText("App Logs", logs)
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(context, "Logs copied to clipboard", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.msg_logs_copied), Toast.LENGTH_SHORT).show()
             }) {
-                Text("Copy")
+                Text(stringResource(R.string.btn_copy))
             }
         }
         
@@ -93,12 +96,12 @@ fun LogsScreen(modifier: Modifier = Modifier) {
         TextButton(
             onClick = {
                 LogHelper.clearLogs(context)
-                logs = "No logs found."
+                logs = noLogsMsg
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
         ) {
-            Text("Clear Logs")
+            Text(stringResource(R.string.btn_clear_logs))
         }
     }
 }

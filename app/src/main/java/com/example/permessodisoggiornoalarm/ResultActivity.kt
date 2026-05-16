@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,7 @@ class ResultActivity : ComponentActivity() {
         enableEdgeToEdge()
         
         val requestId = intent.getStringExtra("request_id") ?: "Unknown"
-        val resultText = intent.getStringExtra("result_text") ?: "No data"
+        val resultText = intent.getStringExtra("result_text") ?: getString(R.string.text_no_data)
         val lang = intent.getStringExtra("lang") ?: "italian"
         
         setContent {
@@ -63,7 +64,7 @@ fun ResultScreen(requestId: String, resultText: String, lang: String, modifier: 
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Request ID: $requestId",
+                text = stringResource(R.string.header_request_id, requestId),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
@@ -73,7 +74,7 @@ fun ResultScreen(requestId: String, resultText: String, lang: String, modifier: 
                 val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(browserIntent)
             }) {
-                Icon(imageVector = Icons.Default.Public, contentDescription = "Open in Browser")
+                Icon(imageVector = Icons.Default.Public, contentDescription = stringResource(R.string.desc_open_browser))
             }
         }
         

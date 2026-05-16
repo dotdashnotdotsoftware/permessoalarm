@@ -3,8 +3,6 @@ package com.example.permessodisoggiornoalarm
 import android.Manifest
 import android.app.Activity
 import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
@@ -35,11 +33,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.permessodisoggiornoalarm.ui.theme.PermessoDiSoggiornoAlarmTheme
 
@@ -108,8 +105,8 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
     if (showAlarmPermissionDialog) {
         AlertDialog(
             onDismissRequest = { showAlarmPermissionDialog = false },
-            title = { Text("Exact Alarm Permission") },
-            text = { Text("This app needs permission to schedule exact alarms for daily status checks. Please enable it in settings for better reliability.") },
+            title = { Text(stringResource(R.string.dialog_exact_alarm_title)) },
+            text = { Text(stringResource(R.string.dialog_exact_alarm_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -120,12 +117,12 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                     }
                     showAlarmPermissionDialog = false
                 }) {
-                    Text("Open Settings")
+                    Text(stringResource(R.string.btn_open_settings))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showAlarmPermissionDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.btn_cancel))
                 }
             }
         )
@@ -147,13 +144,13 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { showLanguageDialog = true }) {
-                        Icon(imageVector = Icons.Default.Language, contentDescription = "Language")
+                        Icon(imageVector = Icons.Default.Language, contentDescription = stringResource(R.string.desc_language))
                     }
                     IconButton(onClick = {
                         val intent = Intent(context, LogsActivity::class.java)
                         context.startActivity(intent)
                     }) {
-                        Icon(imageVector = Icons.Default.Description, contentDescription = "Logs")
+                        Icon(imageVector = Icons.Default.Description, contentDescription = stringResource(R.string.desc_logs))
                     }
                     IconButton(
                         onClick = {
@@ -162,12 +159,12 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                         },
                         enabled = viewModel.permessoItems.size < 5
                     ) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                        Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.desc_add))
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Permesso di Soggiorno",
+                    text = stringResource(R.string.title_permesso_list),
                     style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Center
                 )
@@ -214,12 +211,12 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                                     }
                                 }
                             } else {
-                                Toast.makeText(context, "Add at least one item for the button to work", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.error_add_item), Toast.LENGTH_SHORT).show()
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(imageVector = Icons.Default.Sync, contentDescription = "Check Now")
+                        Icon(imageVector = Icons.Default.Sync, contentDescription = stringResource(R.string.desc_check_now))
                     }
                 }
             }
@@ -258,7 +255,7 @@ fun LanguageSelectionDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Language") },
+        title = { Text(stringResource(R.string.dialog_select_language)) },
         text = {
             Column {
                 languages.forEach { language ->
@@ -281,7 +278,7 @@ fun LanguageSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.btn_cancel))
             }
         }
     )
@@ -302,10 +299,10 @@ fun PermessoItemRow(item: PermessoItem, onDelete: () -> Unit, onOpenBrowser: () 
         }
         Row {
             IconButton(onClick = onOpenBrowser) {
-                Icon(imageVector = Icons.Default.Public, contentDescription = "Open in Browser")
+                Icon(imageVector = Icons.Default.Public, contentDescription = stringResource(R.string.desc_open_browser))
             }
             IconButton(onClick = onDelete) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+                Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.desc_delete))
             }
         }
     }

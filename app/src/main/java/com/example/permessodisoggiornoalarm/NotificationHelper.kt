@@ -17,8 +17,8 @@ object NotificationHelper {
 
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Permesso Status Channel"
-            val descriptionText = "Notifications for Permesso status results"
+            val name = context.getString(R.string.notif_channel_name)
+            val descriptionText = context.getString(R.string.notif_channel_desc)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
@@ -40,9 +40,11 @@ object NotificationHelper {
             context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        val title = context.getString(R.string.notif_title, requestId)
+
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setContentTitle("Permesso Status: $requestId")
+            .setContentTitle(title)
             .setContentText(resultText)
             .setStyle(NotificationCompat.BigTextStyle().bigText(resultText))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

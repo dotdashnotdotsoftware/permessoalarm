@@ -31,17 +31,17 @@
         <activity
             android:name=".AddActivity"
             android:exported="false"
-            android:label="Add Item"
+            android:label="@string/desc_add"
             android:theme="@style/Theme.PermessoDiSoggiornoAlarm" />
         <activity
             android:name=".ResultActivity"
             android:exported="false"
-            android:label="Status Result"
+            android:label="@string/title_status_result"
             android:theme="@style/Theme.PermessoDiSoggiornoAlarm" />
         <activity
             android:name=".LogsActivity"
             android:exported="false"
-            android:label="Application Logs"
+            android:label="@string/title_app_logs"
             android:theme="@style/Theme.PermessoDiSoggiornoAlarm" />
 
         <receiver android:name=".PermessoReceiver" android:enabled="true" android:exported="false" />

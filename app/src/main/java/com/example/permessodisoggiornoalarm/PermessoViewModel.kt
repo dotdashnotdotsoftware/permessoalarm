@@ -117,6 +117,7 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun checkStatus(requestId: String, onResult: (String) -> Unit) {
+        val errorMsg = getApplication<Application>().getString(R.string.msg_something_went_wrong)
         viewModelScope.launch {
             val langParam = getLangParam()
             val result = withContext(Dispatchers.IO) {
@@ -128,12 +129,12 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
                     connection.readTimeout = 10000
 
                     if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-                        parseXml(connection.inputStream)?.trim() ?: "Something went wrong"
+                        parseXml(connection.inputStream)?.trim() ?: errorMsg
                     } else {
-                        "Something went wrong"
+                        errorMsg
                     }
                 } catch (e: Exception) {
-                    "Something went wrong"
+                    errorMsg
                 }
             }
             LogHelper.log(getApplication(), "Check ID $requestId: $result")
@@ -221,7 +222,7 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
                     pendingIntent
                 )
             } else {
-                Log.d("PermessoViewModel", "Scheduling inexact alarm at $time (permission not granted)")
+                LogHelper.log(context, "Scheduling inexact alarm at $time (permission not granted)")
                 alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     dueDate.timeInMillis,

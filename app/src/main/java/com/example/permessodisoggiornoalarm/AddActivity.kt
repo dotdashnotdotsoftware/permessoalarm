@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.permessodisoggiornoalarm.ui.theme.PermessoDiSoggiornoAlarmTheme
 
@@ -57,7 +58,7 @@ fun AddScreen(modifier: Modifier = Modifier, onContinue: (String, String) -> Uni
                     name = it
                 }
             },
-            label = { Text("Name (max 20 chars)") },
+            label = { Text(stringResource(R.string.label_name)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -69,7 +70,7 @@ fun AddScreen(modifier: Modifier = Modifier, onContinue: (String, String) -> Uni
                     requestId = it
                 }
             },
-            label = { Text("Request ID (max 20 chars)") },
+            label = { Text(stringResource(R.string.label_request_id)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -78,7 +79,7 @@ fun AddScreen(modifier: Modifier = Modifier, onContinue: (String, String) -> Uni
             onClick = { if (name.isNotBlank() && requestId.isNotBlank()) onContinue(name, requestId) },
             enabled = name.isNotBlank() && requestId.isNotBlank()
         ) {
-            Text("Continue")
+            Text(stringResource(R.string.btn_continue))
         }
     }
 }

@@ -1,3 +1,41 @@
 <resources>
     <string name="app_name">Permesso Alarm</string>
+    <string name="title_permesso_list">Permesso di Soggiorno</string>
+    <string name="error_add_item">Add at least one item for the button to work</string>
+    <string name="desc_language">Language</string>
+    <string name="desc_logs">Logs</string>
+    <string name="desc_add">Add</string>
+    <string name="desc_check_now">Check Now</string>
+    <string name="dialog_select_language">Select Language</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="desc_delete">Delete</string>
+    <string name="desc_open_browser">Open in Browser</string>
+    <string name="dialog_exact_alarm_title">Exact Alarm Permission</string>
+    <string name="dialog_exact_alarm_text">This app needs permission to schedule exact alarms for daily status checks. Please enable it in settings for better reliability.</string>
+    <string name="btn_open_settings">Open Settings</string>
+
+    <!-- AddActivity -->
+    <string name="label_name">Name (max 20 chars)</string>
+    <string name="label_request_id">Request ID (max 20 chars)</string>
+    <string name="btn_continue">Continue</string>
+
+    <!-- ResultActivity -->
+    <string name="title_status_result">Status Result</string>
+    <string name="header_request_id">Request ID: %1$s</string>
+    <string name="text_no_data">No data</string>
+
+    <!-- LogsActivity -->
+    <string name="title_app_logs">Application Logs</string>
+    <string name="btn_copy">Copy</string>
+    <string name="msg_logs_copied">Logs copied to clipboard</string>
+    <string name="btn_clear_logs">Clear Logs</string>
+    <string name="msg_no_logs">No logs found.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_name">Permesso Status Channel</string>
+    <string name="notif_channel_desc">Notifications for Permesso status results</string>
+    <string name="notif_title">Permesso Status: %1$s</string>
+
+    <!-- ViewModel/Errors -->
+    <string name="msg_something_went_wrong">Something went wrong</string>
 </resources>

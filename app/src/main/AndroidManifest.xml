@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -28,6 +29,11 @@
             android:name=".AddActivity"
             android:exported="false"
             android:label="Add Item"
+            android:theme="@style/Theme.PermessoDiSoggiornoAlarm" />
+        <activity
+            android:name=".ResultActivity"
+            android:exported="false"
+            android:label="Status Result"
             android:theme="@style/Theme.PermessoDiSoggiornoAlarm" />
     </application>
 

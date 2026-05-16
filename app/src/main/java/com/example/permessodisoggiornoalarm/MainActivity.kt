@@ -1,7 +1,14 @@
 package com.example.permessodisoggiornoalarm
 
+import android.Manifest
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -24,17 +31,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.permessodisoggiornoalarm.ui.theme.PermessoDiSoggiornoAlarmTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        createNotificationChannel()
         enableEdgeToEdge()
         setContent {
             PermessoDiSoggiornoAlarmTheme {
                 PermessoApp()
             }
+        }
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Permesso Status Channel"
+            val descriptionText = "Notifications for Permesso status results"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("permesso_channel", name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 }
@@ -45,6 +70,18 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
     val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
     
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { _ -> }
+
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -118,7 +155,7 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                             if (viewModel.permessoItems.isNotEmpty()) {
                                 val firstItem = viewModel.permessoItems.first()
                                 viewModel.checkStatus(firstItem.requestId) { result ->
-                                    Toast.makeText(context, result, Toast.LENGTH_LONG).show()
+                                    showNotification(context, firstItem.requestId, result)
                                 }
                             } else {
                                 Toast.makeText(context, "Add at least one item for the button to work", Toast.LENGTH_SHORT).show()
@@ -143,6 +180,34 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                     onDelete = { viewModel.removeItem(item) }
                 )
             }
+        }
+    }
+}
+
+private fun showNotification(context: Context, requestId: String, resultText: String) {
+    val intent = Intent(context, ResultActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        putExtra("request_id", requestId)
+        putExtra("result_text", resultText)
+    }
+    val pendingIntent: PendingIntent = PendingIntent.getActivity(
+        context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
+
+    val builder = NotificationCompat.Builder(context, "permesso_channel")
+        .setSmallIcon(android.R.drawable.ic_dialog_info)
+        .setContentTitle("Permesso Status Checked")
+        .setContentText("Status for $requestId is ready. Tap to view.")
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .setContentIntent(pendingIntent)
+        .setAutoCancel(true)
+
+    with(NotificationManagerCompat.from(context)) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            notify(1, builder.build())
+        } else {
+            // If permission not granted, fallback to toast or log
+            Toast.makeText(context, resultText, Toast.LENGTH_LONG).show()
         }
     }
 }

@@ -43,9 +43,10 @@ fun TodoApp(viewModel: TodoViewModel = viewModel()) {
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val item = result.data?.getStringExtra("todo_item")
-            if (item != null) {
-                viewModel.addItem(item)
+            val name = result.data?.getStringExtra("name")
+            val todo = result.data?.getStringExtra("todo_item")
+            if (name != null && todo != null) {
+                viewModel.addItem(name, todo)
             }
         }
     }
@@ -82,7 +83,7 @@ fun TodoApp(viewModel: TodoViewModel = viewModel()) {
 }
 
 @Composable
-fun TodoItemRow(item: String, onDelete: () -> Unit) {
+fun TodoItemRow(item: TodoItem, onDelete: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,7 +91,10 @@ fun TodoItemRow(item: String, onDelete: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = item, modifier = Modifier.weight(1f))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = item.name, style = MaterialTheme.typography.titleMedium)
+            Text(text = item.value, style = MaterialTheme.typography.bodyMedium)
+        }
         IconButton(onClick = onDelete) {
             Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
         }

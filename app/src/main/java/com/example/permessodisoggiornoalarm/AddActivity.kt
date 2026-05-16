@@ -23,9 +23,10 @@ class AddActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AddScreen(
                         modifier = Modifier.padding(innerPadding),
-                        onContinue = { text ->
+                        onContinue = { name, todo ->
                             val resultIntent = Intent().apply {
-                                putExtra("todo_item", text)
+                                putExtra("name", name)
+                                putExtra("todo_item", todo)
                             }
                             setResult(Activity.RESULT_OK, resultIntent)
                             finish()
@@ -38,8 +39,9 @@ class AddActivity : ComponentActivity() {
 }
 
 @Composable
-fun AddScreen(modifier: Modifier = Modifier, onContinue: (String) -> Unit) {
-    var text by remember { mutableStateOf("") }
+fun AddScreen(modifier: Modifier = Modifier, onContinue: (String, String) -> Unit) {
+    var name by remember { mutableStateOf("") }
+    var todo by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -49,20 +51,32 @@ fun AddScreen(modifier: Modifier = Modifier, onContinue: (String) -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         TextField(
-            value = text,
+            value = name,
             onValueChange = {
                 if (it.length <= 20 && !it.contains("\n")) {
-                    text = it
+                    name = it
                 }
             },
-            label = { Text("Enter TODO item (max 20 chars)") },
+            label = { Text("Name (max 20 chars)") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        TextField(
+            value = todo,
+            onValueChange = {
+                if (it.length <= 20 && !it.contains("\n")) {
+                    todo = it
+                }
+            },
+            label = { Text("TODO item (max 20 chars)") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { if (text.isNotBlank()) onContinue(text) },
-            enabled = text.isNotBlank()
+            onClick = { if (name.isNotBlank() && todo.isNotBlank()) onContinue(name, todo) },
+            enabled = name.isNotBlank() && todo.isNotBlank()
         ) {
             Text("Continue")
         }

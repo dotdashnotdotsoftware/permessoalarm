@@ -22,9 +22,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Sync
@@ -147,10 +147,10 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                         Icon(imageVector = Icons.Default.Language, contentDescription = stringResource(R.string.desc_language))
                     }
                     IconButton(onClick = {
-                        val intent = Intent(context, LogsActivity::class.java)
+                        val intent = Intent(context, InfoActivity::class.java)
                         context.startActivity(intent)
                     }) {
-                        Icon(imageVector = Icons.Default.Description, contentDescription = stringResource(R.string.desc_logs))
+                        Icon(imageVector = Icons.AutoMirrored.Filled.Help, contentDescription = stringResource(R.string.btn_info))
                     }
                     IconButton(
                         onClick = {
@@ -217,16 +217,6 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(imageVector = Icons.Default.Sync, contentDescription = stringResource(R.string.desc_check_now))
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(
-                        onClick = {
-                            val intent = Intent(context, InfoActivity::class.java)
-                            context.startActivity(intent)
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(stringResource(R.string.btn_info))
                     }
                 }
             }

@@ -78,5 +78,17 @@ fun InfoScreen(modifier: Modifier = Modifier) {
         ) {
             Text(stringResource(R.string.btn_donate))
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            onClick = {
+                val intent = Intent(context, LogsActivity::class.java)
+                context.startActivity(intent)
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(R.string.desc_logs))
+        }
     }
 }

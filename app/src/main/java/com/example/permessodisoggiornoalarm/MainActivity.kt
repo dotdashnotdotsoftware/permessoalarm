@@ -206,8 +206,9 @@ private fun showNotification(context: Context, requestId: String, resultText: St
 
     val builder = NotificationCompat.Builder(context, "permesso_channel")
         .setSmallIcon(android.R.drawable.ic_dialog_info)
-        .setContentTitle("Permesso Status Checked")
-        .setContentText("Status for $requestId is ready. Tap to view.")
+        .setContentTitle("Permesso Status: $requestId")
+        .setContentText(resultText)
+        .setStyle(NotificationCompat.BigTextStyle().bigText(resultText))
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)

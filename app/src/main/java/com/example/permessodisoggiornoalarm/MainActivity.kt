@@ -44,26 +44,12 @@ import com.example.permessodisoggiornoalarm.ui.theme.PermessoDiSoggiornoAlarmThe
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        createNotificationChannel()
+        NotificationHelper.createNotificationChannel(this)
         enableEdgeToEdge()
         setContent {
             PermessoDiSoggiornoAlarmTheme {
                 PermessoApp()
             }
-        }
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Permesso Status Channel"
-            val descriptionText = "Notifications for Permesso status results"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("permesso_channel", name, importance).apply {
-                description = descriptionText
-            }
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
         }
     }
 }
@@ -182,7 +168,7 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                                 val firstItem = viewModel.permessoItems.first()
                                 val lang = viewModel.getLangParam()
                                 viewModel.checkStatus(firstItem.requestId) { result ->
-                                    showNotification(context, firstItem.requestId, result, lang)
+                                    NotificationHelper.showNotification(context, firstItem.requestId, result, lang)
                                 }
                             } else {
                                 Toast.makeText(context, "Add at least one item for the button to work", Toast.LENGTH_SHORT).show()
@@ -213,36 +199,6 @@ fun PermessoApp(viewModel: PermessoViewModel = viewModel()) {
                     }
                 )
             }
-        }
-    }
-}
-
-private fun showNotification(context: Context, requestId: String, resultText: String, lang: String) {
-    val intent = Intent(context, ResultActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        putExtra("request_id", requestId)
-        putExtra("result_text", resultText)
-        putExtra("lang", lang)
-    }
-    val pendingIntent: PendingIntent = PendingIntent.getActivity(
-        context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-    )
-
-    val builder = NotificationCompat.Builder(context, "permesso_channel")
-        .setSmallIcon(android.R.drawable.ic_dialog_info)
-        .setContentTitle("Permesso Status: $requestId")
-        .setContentText(resultText)
-        .setStyle(NotificationCompat.BigTextStyle().bigText(resultText))
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        .setContentIntent(pendingIntent)
-        .setAutoCancel(true)
-
-    with(NotificationManagerCompat.from(context)) {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            notify(1, builder.build())
-        } else {
-            // If permission not granted, fallback to toast or log
-            Toast.makeText(context, resultText, Toast.LENGTH_LONG).show()
         }
     }
 }

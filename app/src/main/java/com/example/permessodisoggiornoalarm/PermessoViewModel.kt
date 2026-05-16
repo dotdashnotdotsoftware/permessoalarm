@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -17,6 +18,8 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class PermessoViewModel(application: Application) : AndroidViewModel(application) {
     private val prefs = application.getSharedPreferences("permesso_prefs", Context.MODE_PRIVATE)
@@ -31,18 +34,7 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
     init {
         loadItems()
         loadRandomTime()
-    }
-
-    private fun loadRandomTime() {
-        val savedTime = prefs.getString("random_time", "") ?: ""
-        if (savedTime.isNotEmpty()) {
-            randomTime = savedTime
-        } else {
-            val hours = (0..23).random()
-            val minutes = (0..59).random()
-            randomTime = "$hours:${minutes.toString().padStart(2, '0')}"
-            prefs.edit().putString("random_time", randomTime).apply()
-        }
+        scheduleDailyWork()
     }
 
     private fun loadItems() {
@@ -59,6 +51,18 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
                     // Ignore malformed entries
                 }
             }
+        }
+    }
+
+    private fun loadRandomTime() {
+        val savedTime = prefs.getString("random_time", "") ?: ""
+        if (savedTime.isNotEmpty()) {
+            randomTime = savedTime
+        } else {
+            val hours = (0..23).random()
+            val minutes = (0..59).random()
+            randomTime = "$hours:${minutes.toString().padStart(2, '0')}"
+            prefs.edit().putString("random_time", randomTime).apply()
         }
     }
 
@@ -92,6 +96,7 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
     fun updateRandomTime(time: String) {
         randomTime = time
         prefs.edit().putString("random_time", time).apply()
+        scheduleDailyWork()
     }
 
     fun getLangParam(): String {
@@ -167,5 +172,34 @@ class PermessoViewModel(application: Application) : AndroidViewModel(application
             e.printStackTrace()
         }
         return null
+    }
+
+    private fun scheduleDailyWork() {
+        val timeParts = randomTime.split(":")
+        val targetHour = timeParts.getOrNull(0)?.toIntOrNull() ?: 0
+        val targetMinute = timeParts.getOrNull(1)?.toIntOrNull() ?: 0
+
+        val currentDate = Calendar.getInstance()
+        val dueDate = Calendar.getInstance()
+        dueDate.set(Calendar.HOUR_OF_DAY, targetHour)
+        dueDate.set(Calendar.MINUTE, targetMinute)
+        dueDate.set(Calendar.SECOND, 0)
+        
+        if (dueDate.before(currentDate)) {
+            dueDate.add(Calendar.HOUR_OF_DAY, 24)
+        }
+
+        val timeDiff = dueDate.timeInMillis - currentDate.timeInMillis
+        
+        val dailyWorkRequest = PeriodicWorkRequestBuilder<PermessoWorker>(24, TimeUnit.HOURS)
+            .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
+            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+            .build()
+
+        WorkManager.getInstance(getApplication()).enqueueUniquePeriodicWork(
+            "PermessoDailyCheck",
+            ExistingPeriodicWorkPolicy.UPDATE,
+            dailyWorkRequest
+        )
     }
 }
